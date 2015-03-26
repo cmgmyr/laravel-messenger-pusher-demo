@@ -147,6 +147,7 @@ return [
 
         'Cmgmyr\Messenger\MessengerServiceProvider',
         'Vinkla\Pusher\PusherServiceProvider',
+        'Collective\Html\HtmlServiceProvider',
 
 	],
 
@@ -197,6 +198,8 @@ return [
 		'View'      => 'Illuminate\Support\Facades\View',
 
         'Pusher' => 'Vinkla\Pusher\Facades\Pusher',
+        'Form' => 'Collective\Html\FormFacade',
+        'Html' => 'Collective\Html\HtmlFacade',
 
 	],
 

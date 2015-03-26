@@ -6,6 +6,7 @@
 	"type": "project",
 	"require": {
 		"laravel/framework": "5.0.*",
+        "laravelcollective/html": "~5.0",
         "cmgmyr/messenger": "~2.0",
         "vinkla/pusher": "~1.0"
 	},
