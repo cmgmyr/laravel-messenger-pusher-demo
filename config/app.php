@@ -146,7 +146,6 @@ return [
 		'Md\Providers\RouteServiceProvider',
 
         'Cmgmyr\Messenger\MessengerServiceProvider',
-        'Vinkla\Pusher\PusherServiceProvider',
         'Collective\Html\HtmlServiceProvider',
 
 	],
@@ -197,7 +196,6 @@ return [
 		'Validator' => 'Illuminate\Support\Facades\Validator',
 		'View'      => 'Illuminate\Support\Facades\View',
 
-        'Pusher' => 'Vinkla\Pusher\Facades\Pusher',
         'Form' => 'Collective\Html\FormFacade',
         'Html' => 'Collective\Html\HtmlFacade',
 

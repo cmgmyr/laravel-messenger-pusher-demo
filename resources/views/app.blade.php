@@ -60,5 +60,15 @@
 	<!-- Scripts -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    @if(Auth::check())
+        <script src="//js.pusher.com/2.2/pusher.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            var pusher = new Pusher('{{Config::get('pusher.appKey')}}');
+            var channel = pusher.subscribe('messages_{{Auth::id()}}');
+            channel.bind('new_message', function(data) {
+                alert(data.message);
+            });
+        </script>
+    @endif
 </body>
 </html>

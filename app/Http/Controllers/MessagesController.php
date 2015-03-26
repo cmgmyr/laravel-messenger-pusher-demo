@@ -9,9 +9,20 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
+use Md\Services\PusherWrapper as Pusher;
 
 class MessagesController extends Controller
 {
+
+    /**
+     * @var Pusher
+     */
+    protected $pusher;
+
+    public function __construct(Pusher $pusher)
+    {
+        $this->pusher = $pusher;
+    }
 
     /**
      * Show all of the message threads to the user
@@ -112,6 +123,8 @@ class MessagesController extends Controller
             $thread->addParticipants($input['recipients']);
         }
 
+        $this->oooPushIt($thread, Auth::user(), Input::get('message'));
+
         return redirect('messages');
     }
 
@@ -157,6 +170,24 @@ class MessagesController extends Controller
             $thread->addParticipants(Input::get('recipients'));
         }
 
+        $this->oooPushIt($thread, Auth::user(), Input::get('message'));
+
         return redirect('messages/' . $id);
+    }
+
+    protected function oooPushIt(Thread $thread, User $sender, $text)
+    {
+        $message = $sender->first_name . ' said: ' . $text;
+
+        $recipients = $thread->participantsUserIds();
+        if (count($recipients) > 0) {
+            foreach($recipients as $recipient) {
+                if ($recipient == $sender->id) {
+                    continue;
+                }
+                
+                $this->pusher->trigger('messages_' . $recipient, 'new_message', ['message' => $message]);
+            }
+        }
     }
 }
