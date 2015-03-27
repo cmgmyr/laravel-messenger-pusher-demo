@@ -1,15 +1,15 @@
 <?php namespace Md\Http\Controllers;
 
-use Md\User;
 use Carbon\Carbon;
-use Cmgmyr\Messenger\Models\Thread;
 use Cmgmyr\Messenger\Models\Message;
 use Cmgmyr\Messenger\Models\Participant;
+use Cmgmyr\Messenger\Models\Thread;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 use Md\Services\PusherWrapper as Pusher;
+use Md\User;
 
 class MessagesController extends Controller
 {
@@ -33,14 +33,8 @@ class MessagesController extends Controller
     {
         $currentUserId = Auth::user()->id;
 
-        // All threads, ignore deleted/archived participants
-        // $threads = Thread::getAllLatest();
-
         // All threads that user is participating in
         $threads = Thread::forUser($currentUserId);
-
-        // All threads that user is participating in, with new messages
-        // $threads = Thread::forUserWithNewMessages($currentUserId);
 
         return view('messenger.index', compact('threads', 'currentUserId'));
     }
@@ -60,9 +54,6 @@ class MessagesController extends Controller
 
             return redirect('messages');
         }
-
-        // show current user in list if not a current participant
-        // $users = User::whereNotIn('id', $thread->participantsUserIds())->get();
 
         // don't show the current user in list
         $userId = Auth::user()->id;
@@ -101,7 +92,7 @@ class MessagesController extends Controller
         );
 
         // Message
-        Message::create(
+        $message = Message::create(
             [
                 'thread_id' => $thread->id,
                 'user_id'   => Auth::user()->id,
@@ -123,7 +114,7 @@ class MessagesController extends Controller
             $thread->addParticipants($input['recipients']);
         }
 
-        $this->oooPushIt($thread, Auth::user(), Input::get('message'));
+        $this->oooPushIt($message);
 
         return redirect('messages');
     }
@@ -147,7 +138,7 @@ class MessagesController extends Controller
         $thread->activateAllParticipants();
 
         // Message
-        Message::create(
+        $message = Message::create(
             [
                 'thread_id' => $thread->id,
                 'user_id'   => Auth::id(),
@@ -170,14 +161,28 @@ class MessagesController extends Controller
             $thread->addParticipants(Input::get('recipients'));
         }
 
-        $this->oooPushIt($thread, Auth::user(), Input::get('message'));
+        $this->oooPushIt($message);
 
         return redirect('messages/' . $id);
     }
 
-    protected function oooPushIt(Thread $thread, User $sender, $text)
+    /**
+     * Send the new message to Pusher in order to notify users
+     *
+     * @param Message $message
+     */
+    protected function oooPushIt(Message $message)
     {
-        $message = $sender->first_name . ' said: ' . $text;
+        $thread = $message->thread;
+        $sender = $message->user;
+
+        $data = [
+            'div_id' => 'thread_' . $thread->id,
+            'sender_name' => $sender->first_name,
+            'thread_url' => route('messages.show', ['id' => $thread->id]),
+            'html' => view('messenger.html-message', compact('message'))->render(),
+            'text' => str_limit($message->body, 50)
+        ];
 
         $recipients = $thread->participantsUserIds();
         if (count($recipients) > 0) {
@@ -186,7 +191,7 @@ class MessagesController extends Controller
                     continue;
                 }
                 
-                $this->pusher->trigger('messages_' . $recipient, 'new_message', ['message' => $message]);
+                $this->pusher->trigger('for_user_' . $recipient, 'new_message', $data);
             }
         }
     }
