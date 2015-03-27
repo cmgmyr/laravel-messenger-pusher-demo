@@ -1,6 +1,7 @@
 @if(Auth::check())
-    <?php $count = Auth::user()->newMessagesCount(); ?>
-    @if($count > 0)
-    <span class="label label-danger">{!! $count !!}</span>
-    @endif
+    <?php
+    $count = Auth::user()->newMessagesCount();
+    $cssClass = $count == 0 ? 'hidden' : '';
+    ?>
+    <span id="unread_messages" class="label label-danger {{$cssClass}}">{!! $count !!}</span>
 @endif

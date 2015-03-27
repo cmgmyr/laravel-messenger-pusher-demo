@@ -177,9 +177,11 @@ class MessagesController extends Controller
         $sender = $message->user;
 
         $data = [
+            'thread_id' => $thread->id,
             'div_id' => 'thread_' . $thread->id,
             'sender_name' => $sender->first_name,
             'thread_url' => route('messages.show', ['id' => $thread->id]),
+            'thread_subject' => $thread->subject,
             'html' => view('messenger.html-message', compact('message'))->render(),
             'text' => str_limit($message->body, 50)
         ];
@@ -194,5 +196,32 @@ class MessagesController extends Controller
                 $this->pusher->trigger('for_user_' . $recipient, 'new_message', $data);
             }
         }
+    }
+
+    /**
+     * Mark a specific thread as read, for ajax use
+     *
+     * @param $id
+     */
+    public function read($id)
+    {
+        $thread = Thread::find($id);
+        if (!$thread) {
+            abort(404);
+        }
+
+        $thread->markAsRead(Auth::id());
+    }
+
+    /**
+     * Get the number of unread threads, for ajax use
+     *
+     * @return array
+     */
+    public function unread()
+    {
+        $count = Auth::user()->newMessagesCount();
+
+        return ['msg_count' => $count];
     }
 }

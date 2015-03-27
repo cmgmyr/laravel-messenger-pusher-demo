@@ -23,6 +23,8 @@ Route::controllers([
 Route::group(['prefix' => 'messages', 'before' => 'auth'], function () {
     Route::get('/', ['as' => 'messages', 'uses' => 'MessagesController@index']);
     Route::get('create', ['as' => 'messages.create', 'uses' => 'MessagesController@create']);
+    Route::get('{id}/read', ['as' => 'messages.read', 'uses' => 'MessagesController@read']);
+    Route::get('unread', ['as' => 'messages.unread', 'uses' => 'MessagesController@unread']);
     Route::post('/', ['as' => 'messages.store', 'uses' => 'MessagesController@store']);
     Route::get('{id}', ['as' => 'messages.show', 'uses' => 'MessagesController@show']);
     Route::put('{id}', ['as' => 'messages.update', 'uses' => 'MessagesController@update']);
