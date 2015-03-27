@@ -6,7 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Laravel</title>
 
-	<link href="{{ asset('/css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/all.css') }}" rel="stylesheet">
 
 	<!-- Fonts -->
 	<link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
@@ -62,6 +63,7 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
     <!-- Start Messenger Demo Changes -->
+    <script src="{{ asset('/js/all.js') }}" type="text/javascript"></script>
     @if(Auth::check())
         <script src="//js.pusher.com/2.2/pusher.min.js" type="text/javascript"></script>
         <script type="text/javascript">
@@ -72,7 +74,9 @@
                 if (thread.length) {
                     thread.append(data.html);
                 } else {
-                    alert(data.sender_name + ' said: ' + data.text);
+                    var message = '<p>' + data.sender_name + ' said: ' + data.text + '</p><p><a href="' + data.thread_url + '">View Message</a></p>';
+
+                    $.growl.notice({ title: "New Message", message: message });
                 }
             });
         </script>

@@ -13,4 +13,12 @@ var elixir = require('laravel-elixir');
 
 elixir(function(mix) {
     mix.less('app.less');
+
+    mix.styles([
+        "jquery.growl.css"
+    ]);
+
+    mix.scripts([
+        "jquery.growl.js"
+    ]);
 });

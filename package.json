@@ -1,7 +1,8 @@
 {
-  "private": true,
-  "devDependencies": {
-    "gulp": "^3.8.8",
-    "laravel-elixir": "*"
-  }
+    "private": true,
+    "devDependencies": {
+        "gulp": "^3.8.8",
+        "gulp-notify": "2.2.*",
+        "laravel-elixir": "*"
+    }
 }
