@@ -34,7 +34,7 @@ class MessagesController extends Controller
         $currentUserId = Auth::user()->id;
 
         // All threads that user is participating in
-        $threads = Thread::forUser($currentUserId);
+        $threads = Thread::forUser($currentUserId)->get();
 
         return view('messenger.index', compact('threads', 'currentUserId'));
     }
