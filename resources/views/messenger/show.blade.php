@@ -6,7 +6,7 @@
         <h1>{!! $thread->subject !!}</h1>
 
         <div id="thread_{{$thread->id}}">
-            @foreach($thread->messages as $message)
+            @foreach($thread->messages()->latest()->get() as $message)
                 @include('messenger.html-message', $message)
             @endforeach
         </div>
