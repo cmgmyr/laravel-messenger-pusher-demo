@@ -1,4 +1,6 @@
-<?php namespace Md\Http\Controllers;
+<?php
+
+namespace Md\Http\Controllers;
 
 use Carbon\Carbon;
 use Cmgmyr\Messenger\Models\Message;
@@ -13,7 +15,6 @@ use Md\User;
 
 class MessagesController extends Controller
 {
-
     /**
      * @var Pusher
      */
@@ -25,7 +26,7 @@ class MessagesController extends Controller
     }
 
     /**
-     * Show all of the message threads to the user
+     * Show all of the message threads to the user.
      *
      * @return mixed
      */
@@ -40,7 +41,7 @@ class MessagesController extends Controller
     }
 
     /**
-     * Shows a message thread
+     * Shows a message thread.
      *
      * @param $id
      * @return mixed
@@ -65,7 +66,7 @@ class MessagesController extends Controller
     }
 
     /**
-     * Creates a new message thread
+     * Creates a new message thread.
      *
      * @return mixed
      */
@@ -77,7 +78,7 @@ class MessagesController extends Controller
     }
 
     /**
-     * Stores a new message thread
+     * Stores a new message thread.
      *
      * @return mixed
      */
@@ -105,7 +106,7 @@ class MessagesController extends Controller
             [
                 'thread_id' => $thread->id,
                 'user_id'   => Auth::user()->id,
-                'last_read' => new Carbon
+                'last_read' => new Carbon,
             ]
         );
 
@@ -120,7 +121,7 @@ class MessagesController extends Controller
     }
 
     /**
-     * Adds a new message to a current thread
+     * Adds a new message to a current thread.
      *
      * @param $id
      * @return mixed
@@ -150,7 +151,7 @@ class MessagesController extends Controller
         $participant = Participant::firstOrCreate(
             [
                 'thread_id' => $thread->id,
-                'user_id'   => Auth::user()->id
+                'user_id'   => Auth::user()->id,
             ]
         );
         $participant->last_read = new Carbon;
@@ -167,7 +168,7 @@ class MessagesController extends Controller
     }
 
     /**
-     * Send the new message to Pusher in order to notify users
+     * Send the new message to Pusher in order to notify users.
      *
      * @param Message $message
      */
@@ -183,12 +184,12 @@ class MessagesController extends Controller
             'thread_url' => route('messages.show', ['id' => $thread->id]),
             'thread_subject' => $thread->subject,
             'html' => view('messenger.html-message', compact('message'))->render(),
-            'text' => str_limit($message->body, 50)
+            'text' => str_limit($message->body, 50),
         ];
 
         $recipients = $thread->participantsUserIds();
         if (count($recipients) > 0) {
-            foreach($recipients as $recipient) {
+            foreach ($recipients as $recipient) {
                 if ($recipient == $sender->id) {
                     continue;
                 }
@@ -199,7 +200,7 @@ class MessagesController extends Controller
     }
 
     /**
-     * Mark a specific thread as read, for ajax use
+     * Mark a specific thread as read, for ajax use.
      *
      * @param $id
      */
@@ -214,7 +215,7 @@ class MessagesController extends Controller
     }
 
     /**
-     * Get the number of unread threads, for ajax use
+     * Get the number of unread threads, for ajax use.
      *
      * @return array
      */

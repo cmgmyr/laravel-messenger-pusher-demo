@@ -1,4 +1,6 @@
-<?php namespace Md\Services; 
+<?php
+
+namespace Md\Services;
 
 use Illuminate\Support\Facades\Config;
 
@@ -6,7 +8,7 @@ class PusherWrapper
 {
     protected $pusher;
 
-    function __construct()
+    public function __construct()
     {
         $app_id = Config::get('pusher.appId');
         $app_key = Config::get('pusher.appKey');
@@ -15,7 +17,8 @@ class PusherWrapper
         $this->pusher = new \Pusher($app_key, $app_secret, $app_id);
     }
 
-    public function __call($name, $args) {
+    public function __call($name, $args)
+    {
         return call_user_func_array(array($this->pusher, $name), $args);
     }
 }
