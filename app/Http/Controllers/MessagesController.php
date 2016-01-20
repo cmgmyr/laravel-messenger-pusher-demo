@@ -22,6 +22,8 @@ class MessagesController extends Controller
 
     public function __construct(Pusher $pusher)
     {
+        $this->middleware('auth');
+
         $this->pusher = $pusher;
     }
 
@@ -193,7 +195,7 @@ class MessagesController extends Controller
                 if ($recipient == $sender->id) {
                     continue;
                 }
-                
+
                 $this->pusher->trigger('for_user_' . $recipient, 'new_message', $data);
             }
         }
